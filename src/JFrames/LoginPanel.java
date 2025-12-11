@@ -4,17 +4,26 @@
  */
 package JFrames;
 
+import dao.UserDAO;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author murph
  */
 public class LoginPanel extends javax.swing.JPanel {
-
+    
+    private ItemLogMainFrame mainFrame;
+    private UserDAO userDAO = new UserDAO();
     /**
      * Creates new form LoginPanel
      */
-    public LoginPanel() {
+    public LoginPanel(ItemLogMainFrame mainFrame) {
         initComponents();
+        this.mainFrame = mainFrame;
+        
+        RegisterBtn.addActionListener(evt -> mainFrame.navigate("Register"));
+        mainFrame.navigate("EventDetails");
     }
 
     /**
@@ -78,6 +87,11 @@ public class LoginPanel extends javax.swing.JPanel {
 
         RegisterBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         RegisterBtn.setText("Register");
+        RegisterBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RegisterBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -104,7 +118,7 @@ public class LoginPanel extends javax.swing.JPanel {
                                         .addComponent(LoginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(RegisterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 6, Short.MAX_VALUE)))))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(306, 306, 306))
         );
         layout.setVerticalGroup(
@@ -139,8 +153,28 @@ public class LoginPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_LoginUserNameTFActionPerformed
 
     private void LoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginBtnActionPerformed
-        // TODO add your handling code here:
+
+    String username = LoginUserNameTF.getText().trim();
+    String password = new String(LoginPasswordTF.getPassword());
+
+    String hashed = Integer.toHexString(password.hashCode());
+
+    boolean valid = userDAO.checkLogin(username, hashed);
+
+    if (valid) {
+        mainFrame.navigate("EventDetails");
+    } else {
+        JOptionPane.showMessageDialog(this, 
+            "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+    }
+
     }//GEN-LAST:event_LoginBtnActionPerformed
+
+    private void RegisterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterBtnActionPerformed
+        // TODO add your handling code here:
+        
+
+    }//GEN-LAST:event_RegisterBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

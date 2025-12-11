@@ -14,27 +14,44 @@ import javax.swing.JPanel;
 public class ItemLogMainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ItemLogMainFrame.class.getName());
-    
-    CardLayout layout;
-    JPanel mainPanel;
-    
+
+    private CardLayout layout;
+    private JPanel mainPanel;
     /**
      * Creates new form ItemLogMainFrame
      */
-    public ItemLogMainFrame() {
+    public ItemLogMainFrame(){
         initComponents();
+        
+        // replacing the default NetBeans layout
+        getContentPane().removeAll();
+        getContentPane().setLayout(new java.awt.BorderLayout());
+        
         layout = new CardLayout();
         mainPanel = new JPanel(layout);
         
         mainPanel.add(new LoginPanel(this), "Login");
         mainPanel.add(new RegisterPanel(this), "Register");
+        mainPanel.add(new EventDetailsPanel(this), "EventDetails");
         mainPanel.add(new ItemListPanel(this), "ItemList");
         mainPanel.add(new ItemCreationPanel(this), "ItemCreation");
+        mainPanel.add(new RecordSalesPanel(this), "RecordSale");
         
-        add(mainPanel);
+        getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
+        
+        
+        //showing the login screen first
         layout.show(mainPanel, "Login");
+        
+        pack();
+        setLocationRelativeTo(null);
     }
+    
+    public void navigate(String pageName) {
+     layout.show(mainPanel, pageName);
+     }
 
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -60,31 +77,9 @@ public class ItemLogMainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void navigate(String pageName){
-        layout.show(mainPanel, "Login");
+    public static void main(String args[]){
+     java.awt.EventQueue.invokeLater(() -> new ItemLogMainFrame().setVisible(true));
     }
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ItemLogMainFrame().setVisible(true));
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }

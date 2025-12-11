@@ -9,12 +9,19 @@ package JFrames;
  * @author murph
  */
 public class ItemListPanel extends javax.swing.JPanel {
-
+    
+    private ItemLogMainFrame mainFrame;
     /**
      * Creates new form ItemListPanel
      */
-    public ItemListPanel() {
+    public ItemListPanel(ItemLogMainFrame mainFrame) {
         initComponents();
+        this.mainFrame = mainFrame;
+        
+        AddBtn.addActionListener(evt -> mainFrame.navigate("ItemCreation"));
+        RecordSaleBtn.addActionListener(evt -> mainFrame.navigate("RecordSale"));
+        EventsBtn.addActionListener(evt -> mainFrame.navigate("EventDetails"));
+        LoginBtn.addActionListener(evt -> mainFrame.navigate("Login"));
     }
 
     /**
@@ -49,24 +56,59 @@ public class ItemListPanel extends javax.swing.JPanel {
 
         AddBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         AddBtn.setText("Add Item");
+        AddBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddBtnActionPerformed(evt);
+            }
+        });
 
         RemoveBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         RemoveBtn.setText("Remove Item");
+        RemoveBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RemoveBtnActionPerformed(evt);
+            }
+        });
 
         UpdateBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         UpdateBtn.setText("Update Item");
+        UpdateBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateBtnActionPerformed(evt);
+            }
+        });
 
         RecordSaleBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         RecordSaleBtn.setText("Record Sale");
+        RecordSaleBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RecordSaleBtnActionPerformed(evt);
+            }
+        });
 
         ExportBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         ExportBtn.setText("Export Transactions");
+        ExportBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ExportBtnActionPerformed(evt);
+            }
+        });
 
         EventsBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         EventsBtn.setText("Back to Events");
+        EventsBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EventsBtnActionPerformed(evt);
+            }
+        });
 
         LoginBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         LoginBtn.setText("Login Page");
+        LoginBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LoginBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -120,6 +162,37 @@ public class ItemListPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void AddBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AddBtnActionPerformed
+
+    private void RemoveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveBtnActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_RemoveBtnActionPerformed
+
+    private void UpdateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateBtnActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_UpdateBtnActionPerformed
+
+    private void RecordSaleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RecordSaleBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_RecordSaleBtnActionPerformed
+
+    private void ExportBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExportBtnActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_ExportBtnActionPerformed
+
+    private void EventsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EventsBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_EventsBtnActionPerformed
+
+    private void LoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_LoginBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

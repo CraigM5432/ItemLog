@@ -9,12 +9,16 @@ package JFrames;
  * @author murph
  */
 public class EventDetailsPanel extends javax.swing.JPanel {
-
+    
+    private ItemLogMainFrame mainFrame;
     /**
      * Creates new form EventDetailsPanel
      */
-    public EventDetailsPanel() {
+    public EventDetailsPanel(ItemLogMainFrame mainFrame) {
         initComponents();
+        this.mainFrame = mainFrame;
+        
+        StartEventBtn.addActionListener(evt -> mainFrame.navigate("ItemList"));
     }
 
     /**
@@ -68,6 +72,11 @@ public class EventDetailsPanel extends javax.swing.JPanel {
 
         StartEventBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         StartEventBtn.setText("Start Event");
+        StartEventBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StartEventBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -129,6 +138,11 @@ public class EventDetailsPanel extends javax.swing.JPanel {
     private void EventDateTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EventDateTFActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_EventDateTFActionPerformed
+
+    private void StartEventBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartEventBtnActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_StartEventBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

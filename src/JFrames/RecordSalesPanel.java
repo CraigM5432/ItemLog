@@ -9,12 +9,16 @@ package JFrames;
  * @author murph
  */
 public class RecordSalesPanel extends javax.swing.JPanel {
-
+    
+    private ItemLogMainFrame mainFrame;
     /**
      * Creates new form RecordSalesPanel
      */
-    public RecordSalesPanel() {
+    public RecordSalesPanel(ItemLogMainFrame mainFrame) {
         initComponents();
+        this.mainFrame = mainFrame;
+        
+        DashboardBtn.addActionListener(evt -> mainFrame.navigate("ItemList"));
     }
 
     /**
@@ -64,9 +68,19 @@ public class RecordSalesPanel extends javax.swing.JPanel {
 
         LogSaleBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         LogSaleBtn.setText("Log Sale");
+        LogSaleBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LogSaleBtnActionPerformed(evt);
+            }
+        });
 
         DashboardBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         DashboardBtn.setText("Dashboard");
+        DashboardBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DashboardBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -119,6 +133,17 @@ public class RecordSalesPanel extends javax.swing.JPanel {
     private void QuantityTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuantityTFActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_QuantityTFActionPerformed
+
+    private void LogSaleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogSaleBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_LogSaleBtnActionPerformed
+
+    private void DashboardBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DashboardBtnActionPerformed
+        // TODO add your handling code here:
+        
+        
+
+    }//GEN-LAST:event_DashboardBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

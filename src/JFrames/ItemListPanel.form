@@ -115,6 +115,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Add Item"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AddBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="RemoveBtn">
       <Properties>
@@ -123,6 +126,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Remove Item"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RemoveBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="UpdateBtn">
       <Properties>
@@ -131,6 +137,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Update Item"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="UpdateBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="RecordSaleBtn">
       <Properties>
@@ -139,6 +148,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Record Sale"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RecordSaleBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="ExportBtn">
       <Properties>
@@ -147,6 +159,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Export Transactions"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ExportBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="EventsBtn">
       <Properties>
@@ -155,6 +170,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Back to Events"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="EventsBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="LoginBtn">
       <Properties>
@@ -163,6 +181,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Login Page"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="LoginBtnActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

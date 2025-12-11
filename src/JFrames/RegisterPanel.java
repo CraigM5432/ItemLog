@@ -4,17 +4,26 @@
  */
 package JFrames;
 
+import dao.UserDAO;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author murph
  */
 public class RegisterPanel extends javax.swing.JPanel {
-
+    
+    private ItemLogMainFrame mainFrame;
+    private UserDAO userDAO = new UserDAO();
     /**
      * Creates new form RegisterPanel
      */
-    public RegisterPanel() {
+    public RegisterPanel(ItemLogMainFrame mainFrame) {
         initComponents();
+        this.mainFrame = mainFrame;
+        
+        mainFrame.navigate("Login");
+        BackBtn.addActionListener(evt -> mainFrame.navigate("Login"));
     }
 
     /**
@@ -32,9 +41,9 @@ public class RegisterPanel extends javax.swing.JPanel {
         EmailLabel = new javax.swing.JLabel();
         RegEmailTF = new javax.swing.JTextField();
         PasswordLabel = new javax.swing.JLabel();
-        RegPasswordTF = new javax.swing.JTextField();
         CreateAccountBtn = new javax.swing.JButton();
         BackBtn = new javax.swing.JButton();
+        RegPasswordTF = new javax.swing.JPasswordField();
 
         setBackground(new java.awt.Color(0, 153, 204));
         setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -61,24 +70,34 @@ public class RegisterPanel extends javax.swing.JPanel {
         PasswordLabel.setForeground(new java.awt.Color(255, 255, 255));
         PasswordLabel.setText("Password:");
 
+        CreateAccountBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        CreateAccountBtn.setText("Create Account");
+        CreateAccountBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CreateAccountBtnActionPerformed(evt);
+            }
+        });
+
+        BackBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        BackBtn.setText("Back");
+        BackBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackBtnActionPerformed(evt);
+            }
+        });
+
         RegPasswordTF.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 RegPasswordTFActionPerformed(evt);
             }
         });
 
-        CreateAccountBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        CreateAccountBtn.setText("Create Account");
-
-        BackBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        BackBtn.setText("Back");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(269, Short.MAX_VALUE)
+                .addGap(269, 269, 269)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -87,18 +106,17 @@ public class RegisterPanel extends javax.swing.JPanel {
                             .addComponent(PasswordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(RegistrationLabel)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(RegPasswordTF, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(RegUserNameTF, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-                                    .addComponent(RegEmailTF, javax.swing.GroupLayout.Alignment.LEADING)))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(RegistrationLabel)
+                                .addGap(0, 48, Short.MAX_VALUE))
+                            .addComponent(RegUserNameTF)
+                            .addComponent(RegEmailTF)
+                            .addComponent(RegPasswordTF)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(CreateAccountBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BackBtn)
-                        .addGap(3, 3, 3)))
-                .addContainerGap(295, Short.MAX_VALUE))
+                        .addComponent(BackBtn)))
+                .addGap(298, 298, 298))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -115,8 +133,8 @@ public class RegisterPanel extends javax.swing.JPanel {
                     .addComponent(EmailLabel))
                 .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(RegPasswordTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(PasswordLabel))
+                    .addComponent(PasswordLabel)
+                    .addComponent(RegPasswordTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(55, 55, 55)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CreateAccountBtn)
@@ -129,6 +147,42 @@ public class RegisterPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_RegEmailTFActionPerformed
 
+    private void CreateAccountBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateAccountBtnActionPerformed
+
+
+    String username = RegUserNameTF.getText().trim();
+    String email = RegEmailTF.getText().trim();
+    String password = RegPasswordTF.getText().trim();
+
+    if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+        JOptionPane.showMessageDialog(this, 
+            "All fields must be filled.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Hashing the password (basic implementation)
+    String hashed = Integer.toHexString(password.hashCode());
+
+    boolean success = userDAO.createUser(username, email, hashed);
+
+    if (success) {
+        JOptionPane.showMessageDialog(this, 
+            "Account created successfully!");
+        mainFrame.navigate("Login");
+    } else {
+        JOptionPane.showMessageDialog(this, 
+            "Username or email already exists.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+
+        
+    }//GEN-LAST:event_CreateAccountBtnActionPerformed
+
+    private void BackBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackBtnActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_BackBtnActionPerformed
+
     private void RegPasswordTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegPasswordTFActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_RegPasswordTFActionPerformed
@@ -140,7 +194,7 @@ public class RegisterPanel extends javax.swing.JPanel {
     private javax.swing.JLabel EmailLabel;
     private javax.swing.JLabel PasswordLabel;
     private javax.swing.JTextField RegEmailTF;
-    private javax.swing.JTextField RegPasswordTF;
+    private javax.swing.JPasswordField RegPasswordTF;
     private javax.swing.JTextField RegUserNameTF;
     private javax.swing.JLabel RegistrationLabel;
     private javax.swing.JLabel UserNameLabel;

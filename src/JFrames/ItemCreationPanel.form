@@ -193,6 +193,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Save Item"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SaveItemBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="DashboardBtn">
       <Properties>
@@ -201,6 +204,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Dashboard"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DashboardBtnActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

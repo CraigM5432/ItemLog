@@ -131,6 +131,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Log Sale"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="LogSaleBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="DashboardBtn">
       <Properties>
@@ -139,6 +142,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Dashboard"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DashboardBtnActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
