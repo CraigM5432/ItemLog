@@ -34,7 +34,6 @@ public class ItemListPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         ItemListLabel = new javax.swing.JLabel();
-        RemoveAfterwards = new javax.swing.JLabel();
         AddBtn = new javax.swing.JButton();
         RemoveBtn = new javax.swing.JButton();
         UpdateBtn = new javax.swing.JButton();
@@ -50,9 +49,6 @@ public class ItemListPanel extends javax.swing.JPanel {
         ItemListLabel.setForeground(new java.awt.Color(255, 255, 255));
         ItemListLabel.setText("Item List: ");
         ItemListLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-
-        RemoveAfterwards.setForeground(new java.awt.Color(255, 255, 255));
-        RemoveAfterwards.setText("We can remove these later, just to make sure we can switch between different forms:");
 
         AddBtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         AddBtn.setText("Add Item");
@@ -129,13 +125,10 @@ public class ItemListPanel extends javax.swing.JPanel {
                                     .addComponent(AddBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 412, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(EventsBtn)
-                                .addGap(18, 18, 18)
-                                .addComponent(LoginBtn))
-                            .addComponent(RemoveAfterwards, javax.swing.GroupLayout.Alignment.TRAILING))))
+                        .addGap(0, 622, Short.MAX_VALUE)
+                        .addComponent(EventsBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(LoginBtn)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -153,9 +146,7 @@ public class ItemListPanel extends javax.swing.JPanel {
                 .addComponent(RecordSaleBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(ExportBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58)
-                .addComponent(RemoveAfterwards)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(80, 80, 80)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(LoginBtn)
                     .addComponent(EventsBtn))
@@ -202,7 +193,6 @@ public class ItemListPanel extends javax.swing.JPanel {
     private javax.swing.JLabel ItemListLabel;
     private javax.swing.JButton LoginBtn;
     private javax.swing.JButton RecordSaleBtn;
-    private javax.swing.JLabel RemoveAfterwards;
     private javax.swing.JButton RemoveBtn;
     private javax.swing.JButton UpdateBtn;
     // End of variables declaration//GEN-END:variables

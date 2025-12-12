@@ -45,15 +45,10 @@
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="0" pref="412" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="EventsBtn" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="LoginBtn" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="RemoveAfterwards" alignment="1" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <EmptySpace min="0" pref="622" max="32767" attributes="0"/>
+                      <Component id="EventsBtn" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="LoginBtn" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -75,9 +70,7 @@
               <Component id="RecordSaleBtn" min="-2" pref="45" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="ExportBtn" min="-2" pref="45" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
-              <Component id="RemoveAfterwards" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="80" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="LoginBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="EventsBtn" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -98,14 +91,6 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Item List: "/>
         <Property name="verticalAlignment" type="int" value="1"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="RemoveAfterwards">
-      <Properties>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="We can remove these later, just to make sure we can switch between different forms:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="AddBtn">
