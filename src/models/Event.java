@@ -24,5 +24,23 @@ public class Event {
         this.eventName = eventName;
         this.eventDate = eventDate;
     }
+
+    public int getEventID() {
+        return eventID;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventDate() {
+        return eventDate;
+    }
+    
+    
     
 }

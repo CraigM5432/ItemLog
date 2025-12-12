@@ -17,6 +17,8 @@ public class ItemLogMainFrame extends javax.swing.JFrame {
 
     private CardLayout layout;
     private JPanel mainPanel;
+    
+    public int currentUserId, currentEventId;
     /**
      * Creates new form ItemLogMainFrame
      */

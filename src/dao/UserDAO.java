@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import models.User;
 
 public class UserDAO {
 
@@ -54,4 +55,33 @@ public class UserDAO {
             return false;
         }
     }
+    
+
+        public User login(String username, String passwordHash) {
+
+            String sql = "SELECT * FROM users WHERE username = ? AND password_hash = ?";
+
+            try (Connection conn = DBConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setString(1, username);
+                stmt.setString(2, passwordHash);
+
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    return new User(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("email")
+                    );
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Login error: " + e.getMessage());
+            }
+
+            return null; // login failed
+        }
+
 }

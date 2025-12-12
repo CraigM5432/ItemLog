@@ -6,6 +6,8 @@ package JFrames;
 
 import dao.UserDAO;
 import javax.swing.JOptionPane;
+import models.Session;
+import models.User;
 
 /**
  *
@@ -155,18 +157,24 @@ public class LoginPanel extends javax.swing.JPanel {
     private void LoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginBtnActionPerformed
 
     String username = LoginUserNameTF.getText().trim();
+    
     String password = new String(LoginPasswordTF.getPassword());
-
     String hashed = Integer.toHexString(password.hashCode());
 
-    boolean valid = userDAO.checkLogin(username, hashed);
+    User loggedInUser = userDAO.login(username, hashed);
 
-    if (valid) {
+
+        if (loggedInUser != null) {
+
+        
+        Session.setUser(loggedInUser);
+
+        JOptionPane.showMessageDialog(this, "Login successful!");
         mainFrame.navigate("EventDetails");
-    } else {
-        JOptionPane.showMessageDialog(this, 
-            "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
-    }
+
+        } else {
+        JOptionPane.showMessageDialog(this, "Invalid username or password.");
+        }
 
     }//GEN-LAST:event_LoginBtnActionPerformed
 
