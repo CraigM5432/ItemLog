@@ -5,14 +5,15 @@
         <group>
             <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/JFrames/ItemLogMainFrame.java</file>
             <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/JFrames/LoginPanel.java</file>
-            <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/JFrames/RegisterPanel.java</file>
             <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/JFrames/EventDetailsPanel.java</file>
+            <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/JFrames/RegisterPanel.java</file>
             <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/JFrames/ItemListPanel.java</file>
             <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/JFrames/ItemCreationPanel.java</file>
             <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/JFrames/RecordSalesPanel.java</file>
-            <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/JFrames/DBConnection.java</file>
-            <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/dao/UserDAO.java</file>
-            <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/dao/EventDAO.java</file>
+            <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/models/User.java</file>
+            <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/models/Transaction.java</file>
+            <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/models/Session.java</file>
+            <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/models/Item.java</file>
             <file>file:/C:/Users/murph/OneDrive/Documents/College%20Year%204/Final%20Year%20Project/ItemLog/ItemLogApp/src/models/Event.java</file>
         </group>
     </open-files>

@@ -8,21 +8,29 @@ import dao.UserDAO;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * 
  * @author murph
  */
+
+// handling new user account creation
+
+// Collecting user details, validating input,
+// hashes password, and stores user securely in the database using the UserDAO class. 
+
 public class RegisterPanel extends javax.swing.JPanel {
-    
+    // reference to the main application frame for navigation 
     private ItemLogMainFrame mainFrame;
+    
+    //DAO responsible for user-related database operations
     private UserDAO userDAO = new UserDAO();
-    /**
-     * Creates new form RegisterPanel
-     */
+    
+    // creates RegisterPanel and sets up navigation controls
     public RegisterPanel(ItemLogMainFrame mainFrame) {
         initComponents();
         this.mainFrame = mainFrame;
         
         mainFrame.navigate("Login");
+        // navigating back to login screen
         BackBtn.addActionListener(evt -> mainFrame.navigate("Login"));
     }
 
@@ -146,23 +154,27 @@ public class RegisterPanel extends javax.swing.JPanel {
     private void RegEmailTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegEmailTFActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_RegEmailTFActionPerformed
-
+    // V=validates user input 
+    // hashes the password
+    // stores user details securely via UserDAO
     private void CreateAccountBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateAccountBtnActionPerformed
 
-
+    // retrieving and sanitising user input 
     String username = RegUserNameTF.getText().trim();
     String email = RegEmailTF.getText().trim();
     String password = RegPasswordTF.getText().trim();
-
+    
+    //input validation 
     if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
         JOptionPane.showMessageDialog(this, 
             "All fields must be filled.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
-    // Hashing the password (basic implementation)
+    // hashing the password before storing it 
     String hashed = Integer.toHexString(password.hashCode());
 
+    // attempting to create the user in the database
     boolean success = userDAO.createUser(username, email, hashed);
 
     if (success) {

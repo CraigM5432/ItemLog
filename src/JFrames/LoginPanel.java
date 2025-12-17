@@ -15,7 +15,11 @@ import models.User;
  */
 public class LoginPanel extends javax.swing.JPanel {
     
+    //reference to the mai application frame 
     private ItemLogMainFrame mainFrame;
+    
+    // responsible for user authentication
+    
     private UserDAO userDAO = new UserDAO();
     /**
      * Creates new form LoginPanel
@@ -24,6 +28,7 @@ public class LoginPanel extends javax.swing.JPanel {
         initComponents();
         this.mainFrame = mainFrame;
         
+        // navigate to registration screen when user selects "Register"
         RegisterBtn.addActionListener(evt -> mainFrame.navigate("Register"));
         mainFrame.navigate("EventDetails");
     }
@@ -155,21 +160,26 @@ public class LoginPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_LoginUserNameTFActionPerformed
 
     private void LoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginBtnActionPerformed
-
-    String username = LoginUserNameTF.getText().trim();
     
+    // retriving and sanitising user input for input field 
+    String username = LoginUserNameTF.getText().trim();
     String password = new String(LoginPasswordTF.getPassword());
+    
+    // hashing the password before sending it to DB
     String hashed = Integer.toHexString(password.hashCode());
-
+    
+    // attempting authentication through DAO
     User loggedInUser = userDAO.login(username, hashed);
 
 
         if (loggedInUser != null) {
 
-        
+        // storing the authenticated user in session
         Session.setUser(loggedInUser);
-
+        
         JOptionPane.showMessageDialog(this, "Login successful!");
+        
+        // navigate to the Event Details screen
         mainFrame.navigate("EventDetails");
 
         } else {

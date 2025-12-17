@@ -9,19 +9,25 @@ import javax.swing.JPanel;
 
 /**
  *
+ * The Main application window
+ * 
+ * The JFrane is the central controller
+ * CardLayout to switch between different JPanels
+ * 
+ * 
  * @author murph
  */
 public class ItemLogMainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ItemLogMainFrame.class.getName());
-
+    
+    // declared variables
     private CardLayout layout;
     private JPanel mainPanel;
     
     public int currentUserId, currentEventId;
-    /**
-     * Creates new form ItemLogMainFrame
-     */
+    
+    // constructor
     public ItemLogMainFrame(){
         initComponents();
         
@@ -29,9 +35,11 @@ public class ItemLogMainFrame extends javax.swing.JFrame {
         getContentPane().removeAll();
         getContentPane().setLayout(new java.awt.BorderLayout());
         
+        // Cardlayout for panel navigation initialised
         layout = new CardLayout();
         mainPanel = new JPanel(layout);
         
+        //All applications screens have unique identifiers 
         mainPanel.add(new LoginPanel(this), "Login");
         mainPanel.add(new RegisterPanel(this), "Register");
         mainPanel.add(new EventDetailsPanel(this), "EventDetails");
@@ -39,16 +47,19 @@ public class ItemLogMainFrame extends javax.swing.JFrame {
         mainPanel.add(new ItemCreationPanel(this), "ItemCreation");
         mainPanel.add(new RecordSalesPanel(this), "RecordSale");
         
+        // adding the main panel to the frame
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
         
         
-        //showing the login screen first
+        //displaying login screen first
         layout.show(mainPanel, "Login");
         
+        // window size is centre of the screen
         pack();
         setLocationRelativeTo(null);
     }
     
+    // Switching between application panels using CardLayout
     public void navigate(String pageName) {
      layout.show(mainPanel, pageName);
      }
