@@ -166,6 +166,7 @@ public class LoginPanel extends javax.swing.JPanel {
     String password = new String(LoginPasswordTF.getPassword());
     
     // hashing the password before sending it to DB
+    //hashCode() is Java's built in hashing method
     String hashed = Integer.toHexString(password.hashCode());
     
     // attempting authentication through DAO
