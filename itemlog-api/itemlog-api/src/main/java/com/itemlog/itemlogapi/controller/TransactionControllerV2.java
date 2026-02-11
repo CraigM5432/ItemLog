@@ -3,7 +3,8 @@ package com.itemlog.itemlogapi.controller;
 import com.itemlog.itemlogapi.dto.CreateTransactionRequest;
 import com.itemlog.itemlogapi.dto.TransactionResponse;
 import com.itemlog.itemlogapi.entity.Transaction;
-import com.itemlog.itemlogapi.security.TokenGuards;
+import com.itemlog.itemlogapi.exception.NotFoundException;
+import com.itemlog.itemlogapi.security.CurrentUser;
 import com.itemlog.itemlogapi.service.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -15,17 +16,13 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-/**
- * DEPRECATED: Use V2 endpoints: /events/{eventId}/transactions
- */
-@Deprecated
 @RestController
-@RequestMapping("/users/{userId}/events/{eventId}/transactions")
-public class TransactionController {
+@RequestMapping("/events/{eventId}/transactions")
+public class TransactionControllerV2 {
 
     private final TransactionService txService;
 
-    public TransactionController(TransactionService txService) {
+    public TransactionControllerV2(TransactionService txService) {
         this.txService = txService;
     }
 
@@ -44,31 +41,31 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TransactionResponse>> list(@PathVariable Integer userId,
-                                                          @PathVariable Integer eventId) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+    public ResponseEntity<List<TransactionResponse>> list(@PathVariable Integer eventId) {
+        Integer userId = CurrentUser.id();
+        if (userId == null) throw new NotFoundException("User not found.");
 
         List<TransactionResponse> result = txService.listTransactions(userId, eventId).stream()
-                .map(TransactionController::toResponse)
+                .map(TransactionControllerV2::toResponse)
                 .toList();
 
         return ResponseEntity.ok(result);
     }
 
     @PostMapping
-    public ResponseEntity<TransactionResponse> create(@PathVariable Integer userId,
-                                                      @PathVariable Integer eventId,
+    public ResponseEntity<TransactionResponse> create(@PathVariable Integer eventId,
                                                       @Valid @RequestBody CreateTransactionRequest request) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+        Integer userId = CurrentUser.id();
+        if (userId == null) throw new NotFoundException("User not found.");
 
         Transaction saved = txService.createTransaction(userId, eventId, request);
         return ResponseEntity.status(201).body(toResponse(saved));
     }
 
     @GetMapping("/export")
-    public ResponseEntity<byte[]> exportCsv(@PathVariable Integer userId,
-                                            @PathVariable Integer eventId) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+    public ResponseEntity<byte[]> exportCsv(@PathVariable Integer eventId) {
+        Integer userId = CurrentUser.id();
+        if (userId == null) throw new NotFoundException("User not found.");
 
         String csv = txService.exportTransactionsCsv(userId, eventId);
 

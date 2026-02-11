@@ -5,7 +5,8 @@ import com.itemlog.itemlogapi.dto.ItemResponse;
 import com.itemlog.itemlogapi.dto.MessageResponse;
 import com.itemlog.itemlogapi.dto.UpdateItemRequest;
 import com.itemlog.itemlogapi.entity.Item;
-import com.itemlog.itemlogapi.security.TokenGuards;
+import com.itemlog.itemlogapi.exception.NotFoundException;
+import com.itemlog.itemlogapi.security.CurrentUser;
 import com.itemlog.itemlogapi.service.ItemService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -13,17 +14,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * DEPRECATED: Using V2 endpoints: /events/{eventId}/items
- */
-@Deprecated
 @RestController
-@RequestMapping("/users/{userId}/events/{eventId}/items")
-public class ItemController {
+@RequestMapping("/events/{eventId}/items")
+public class ItemControllerV2 {
 
     private final ItemService itemService;
 
-    public ItemController(ItemService itemService) {
+    public ItemControllerV2(ItemService itemService) {
         this.itemService = itemService;
     }
 
@@ -42,57 +39,56 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemResponse>> listItems(@PathVariable Integer userId,
-                                                        @PathVariable Integer eventId) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+    public ResponseEntity<List<ItemResponse>> listItems(@PathVariable Integer eventId) {
+        Integer userId = CurrentUser.id();
+        if (userId == null) throw new NotFoundException("User not found.");
 
         List<ItemResponse> result = itemService.listItems(userId, eventId).stream()
-                .map(ItemController::toResponse)
+                .map(ItemControllerV2::toResponse)
                 .toList();
 
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemResponse> getItem(@PathVariable Integer userId,
-                                                @PathVariable Integer eventId,
+    public ResponseEntity<ItemResponse> getItem(@PathVariable Integer eventId,
                                                 @PathVariable Integer itemId) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+        Integer userId = CurrentUser.id();
+        if (userId == null) throw new NotFoundException("User not found.");
 
         Item item = itemService.getItem(userId, eventId, itemId);
         return ResponseEntity.ok(toResponse(item));
     }
 
     @PostMapping
-    public ResponseEntity<ItemResponse> createItem(@PathVariable Integer userId,
-                                                   @PathVariable Integer eventId,
+    public ResponseEntity<ItemResponse> createItem(@PathVariable Integer eventId,
                                                    @Valid @RequestBody CreateItemRequest request) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+        Integer userId = CurrentUser.id();
+        if (userId == null) throw new NotFoundException("User not found.");
 
         Item saved = itemService.createItem(userId, eventId, request);
         return ResponseEntity.status(201).body(toResponse(saved));
     }
 
     @PutMapping("/{itemId}")
-    public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer userId,
-                                                   @PathVariable Integer eventId,
+    public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer eventId,
                                                    @PathVariable Integer itemId,
                                                    @Valid @RequestBody UpdateItemRequest request) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+        Integer userId = CurrentUser.id();
+        if (userId == null) throw new NotFoundException("User not found.");
 
         Item saved = itemService.updateItem(userId, eventId, itemId, request);
         return ResponseEntity.ok(toResponse(saved));
     }
 
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<MessageResponse> deleteItem(@PathVariable Integer userId,
-                                                      @PathVariable Integer eventId,
+    public ResponseEntity<MessageResponse> deleteItem(@PathVariable Integer eventId,
                                                       @PathVariable Integer itemId) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+        Integer userId = CurrentUser.id();
+        if (userId == null) throw new NotFoundException("User not found.");
 
         itemService.deleteItem(userId, eventId, itemId);
         return ResponseEntity.ok(new MessageResponse("Item deleted"));
     }
 }
-
 
