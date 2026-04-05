@@ -23,6 +23,27 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+
+        if (userRepo.existsByUsername(request.getUsername())) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Username already exists."));
+        }
+
+        if (userRepo.existsByEmail(request.getEmail())) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Email already exists."));
+        }
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+
+        userRepo.save(user);
+
+        return ResponseEntity.ok(new MessageResponse("User registered successfully."));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
 
@@ -45,8 +66,6 @@ public class AuthController {
                 token
         ));
     }
-
-    // Keep your /register endpoint as-is (no change needed)
 }
 
 
