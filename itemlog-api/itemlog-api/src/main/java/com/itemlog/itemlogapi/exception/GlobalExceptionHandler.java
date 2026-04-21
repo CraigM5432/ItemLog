@@ -7,6 +7,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.dao.DataIntegrityViolationException;
+import com.itemlog.itemlogapi.dto.ValidationErrorResponse;
+import org.springframework.validation.FieldError;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -18,14 +22,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
-        String msg = ex.getBindingResult().getFieldErrors().stream()
-                .map(e -> e.getField() + ": " + e.getDefaultMessage())
-                .findFirst()
-                .orElse("Validation error");
+    public ResponseEntity<ValidationErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> fieldErrors = new LinkedHashMap<>();
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(msg));
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            fieldErrors.put(error.getField(), error.getDefaultMessage());
+        }
+
+        ValidationErrorResponse response =
+                new ValidationErrorResponse("Validation failed", fieldErrors);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
