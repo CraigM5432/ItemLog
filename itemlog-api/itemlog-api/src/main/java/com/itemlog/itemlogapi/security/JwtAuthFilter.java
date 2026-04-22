@@ -1,6 +1,7 @@
 package com.itemlog.itemlogapi.security;
 
 import com.itemlog.itemlogapi.repository.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,39 +33,46 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String auth = request.getHeader("Authorization");
+        final String authHeader = request.getHeader("Authorization");
 
-        if (auth != null && auth.startsWith("Bearer ")) {
-            String token = auth.substring(7);
-
-            try {
-                String username = jwtService.extractUsername(token);
-                Integer userId = jwtService.extractUserId(token);
-
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    if (userRepo.findByUsername(username).isPresent()) {
-                        var authentication = new UsernamePasswordAuthenticationToken(
-                                username,
-                                null,
-                                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                        );
-
-                        // 🔥 store userId for controllers/services
-                        authentication.setDetails(Map.of("userId", userId));
-
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }
-                }
-
-            } catch (JwtException | IllegalArgumentException ex) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"message\":\"Invalid or expired token.\"}");
-                return;
-            }
+        // No token → continue (Spring will handle unauthorized)
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
+        try {
+            final String token = authHeader.substring(7);
+
+            String username = jwtService.extractUsername(token);
+            Integer userId = jwtService.extractUserId(token);
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (userRepo.findByUsername(username).isPresent()) {
+
+                    var authentication = new UsernamePasswordAuthenticationToken(
+                            username,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                    );
+
+                    // store userId for later use
+                    authentication.setDetails(Map.of("userId", userId));
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+
+        } catch (ExpiredJwtException ex) {
+            // Token expired → clear context, let Spring return 401
+            SecurityContextHolder.clearContext();
+
+        } catch (JwtException | IllegalArgumentException ex) {
+            // Invalid token → clear context, let Spring return 401
+            SecurityContextHolder.clearContext();
+        }
+
+        // Continue filter chain (important)
         filterChain.doFilter(request, response);
     }
 }
-
