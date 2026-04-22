@@ -4,10 +4,13 @@ import com.itemlog.itemlogapi.dto.*;
 import com.itemlog.itemlogapi.entity.User;
 import com.itemlog.itemlogapi.repository.UserRepository;
 import com.itemlog.itemlogapi.security.JwtService;
+import com.itemlog.itemlogapi.security.ratelimit.LoginRateLimiter;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -16,11 +19,16 @@ public class AuthController {
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final LoginRateLimiter rateLimiter;
 
-    public AuthController(UserRepository userRepo, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthController(UserRepository userRepo,
+                          PasswordEncoder passwordEncoder,
+                          JwtService jwtService,
+                          LoginRateLimiter rateLimiter) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.rateLimiter = rateLimiter;
     }
 
     @PostMapping("/register")
@@ -45,7 +53,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request,
+                                   HttpServletRequest httpRequest) {
+
+        String clientIp = httpRequest.getRemoteAddr();
+
+        if (!rateLimiter.isAllowed(clientIp)) {
+            return ResponseEntity.status(429)
+                    .body(new ErrorResponse("Too many login attempts. Please try again later."));
+        }
 
         User user = userRepo.findByUsername(request.getUsername()).orElse(null);
         if (user == null) {
@@ -67,5 +83,4 @@ public class AuthController {
         ));
     }
 }
-
 
