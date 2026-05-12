@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+// Service layer for event business logic.
+// Ensures events are always linked to, retrieved for, or modified by the correct authenticated user.
 @Service
 public class EventService {
 
@@ -31,6 +33,8 @@ public class EventService {
 
     public Event getEvent(Integer userId, Integer eventId) {
         ensureUserExists(userId);
+
+        // Ownership check: only returns the event if it belongs to the authenticated user.
         return eventRepo.findByEventIdAndUser_UserId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event not found for this user."));
     }
@@ -39,18 +43,16 @@ public class EventService {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found."));
 
-        LocalDate date = parseDateStrict(request.getEventDate());
-
         Event event = new Event();
         event.setUser(user);
         event.setEventName(request.getEventName().trim());
-        event.setEventDate(date);
+        event.setEventDate(parseDateStrict(request.getEventDate()));
 
         return eventRepo.save(event);
     }
 
     public Event updateEvent(Integer userId, Integer eventId, UpdateEventRequest request) {
-        Event event = getEvent(userId, eventId); // includes user exists + ownership check
+        Event event = getEvent(userId, eventId);
 
         if (request.getEventName() != null && !request.getEventName().isBlank()) {
             event.setEventName(request.getEventName().trim());
@@ -64,7 +66,7 @@ public class EventService {
     }
 
     public void deleteEvent(Integer userId, Integer eventId) {
-        Event event = getEvent(userId, eventId); // includes user exists + ownership check
+        Event event = getEvent(userId, eventId);
         eventRepo.delete(event);
     }
 
@@ -76,10 +78,9 @@ public class EventService {
 
     private LocalDate parseDateStrict(String dateStr) {
         try {
-            return LocalDate.parse(dateStr.trim()); // ISO YYYY-MM-DD
+            return LocalDate.parse(dateStr.trim());
         } catch (DateTimeParseException ex) {
             throw new IllegalArgumentException("eventDate must be in YYYY-MM-DD format.");
         }
     }
 }
-

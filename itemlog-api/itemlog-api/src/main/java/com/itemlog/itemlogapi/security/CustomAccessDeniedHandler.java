@@ -13,6 +13,8 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+// Returns a consistent JSON response when an authenticated user is forbidden
+// from accessing a resource.
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
@@ -24,6 +26,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             HttpServletResponse response,
             AccessDeniedException accessDeniedException
     ) throws IOException {
+
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 

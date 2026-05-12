@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+// Custom filter that authenticates requests using the JWT Bearer token.
+// If the token is valid, the user's identity is placed into Spring Security's context.
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -35,7 +37,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        // No token → continue (Spring will handle unauthorized)
+        // Requests without a Bearer token continue unauthenticated.
+        // Protected routes are rejected later by Spring Security.
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -48,31 +51,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             Integer userId = jwtService.extractUserId(token);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if (userRepo.findByUsername(username).isPresent()) {
 
+                // Confirms the token belongs to a user that still exists in the database.
+                if (userRepo.findByUsername(username).isPresent()) {
                     var authentication = new UsernamePasswordAuthenticationToken(
                             username,
                             null,
                             List.of(new SimpleGrantedAuthority("ROLE_USER"))
                     );
 
-                    // store userId for later use
+                    // Stores userId so controllers/services can enforce ownership checks.
                     authentication.setDetails(Map.of("userId", userId));
-
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
 
         } catch (ExpiredJwtException ex) {
-            // Token expired → clear context, let Spring return 401
             SecurityContextHolder.clearContext();
 
         } catch (JwtException | IllegalArgumentException ex) {
-            // Invalid token → clear context, let Spring return 401
             SecurityContextHolder.clearContext();
         }
 
-        // Continue filter chain (important)
         filterChain.doFilter(request, response);
     }
 }

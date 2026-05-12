@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+// Entity representing merchandise stock for a specific event.
 @Entity
 @Table(name = "items")
 public class Item {
@@ -14,6 +15,7 @@ public class Item {
     @Column(name = "item_id")
     private Integer itemId;
 
+    // Each item belongs to one event.
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
@@ -21,6 +23,7 @@ public class Item {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
+    // BigDecimal is used for currency accuracy.
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
@@ -33,13 +36,14 @@ public class Item {
     @Column(name = "image_path", length = 255)
     private String imagePath;
 
-    // Matches MySQL TEXT exactly
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    // Database-managed timestamp.
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    // Empty constructor required by JPA.
     public Item() {}
 
     public Integer getItemId() { return itemId; }
@@ -68,5 +72,3 @@ public class Item {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 }
-
-

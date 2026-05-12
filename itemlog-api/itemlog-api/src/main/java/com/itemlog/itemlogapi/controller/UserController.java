@@ -6,18 +6,30 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/users")
-public class UserController {
+// Controller for user-related endpoints.
+// IMPORTANT: This controller exposes all users and should not be left public
+// in a deployed production API.
+//@RestController
+//@RequestMapping("/users")
+//public class UserController {
 
-    private final UserRepository repo;
+    // Repository used to read user records from the database.
+  //  private final UserRepository repo;
 
-    public UserController(UserRepository repo) {
-        this.repo = repo;
-    }
+    // Constructor injection allows Spring to provide the user repository.
+    //public UserController(UserRepository repo) {
+      //  this.repo = repo;
+    //}
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return repo.findAll();
-    }
-}
+    // Handles GET /users.
+    // This returns every user in the database.
+    //
+    // SECURITY NOTE:
+    // This endpoint should be removed, disabled, or restricted to an admin role.
+    // In the current project, it was likely useful for testing,
+    // but it is not suitable for a public deployed backend.
+    //@GetMapping
+    //public List<User> getAllUsers() {
+      //  return repo.findAll();
+    //}
+//}

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+// Service layer for item business logic.
+// Ensures items can only be accessed through events owned by the authenticated user.
 @Service
 public class ItemService {
 
@@ -64,18 +66,23 @@ public class ItemService {
         if (request.getName() != null && !request.getName().isBlank()) {
             item.setName(request.getName().trim());
         }
+
         if (request.getPrice() != null) {
             item.setPrice(request.getPrice());
         }
+
         if (request.getSize() != null) {
             item.setSize(trimOrNull(request.getSize()));
         }
+
         if (request.getQuantity() != null) {
             item.setQuantity(request.getQuantity());
         }
+
         if (request.getImagePath() != null) {
             item.setImagePath(trimOrNull(request.getImagePath()));
         }
+
         if (request.getDescription() != null) {
             item.setDescription(trimOrNull(request.getDescription()));
         }
@@ -86,7 +93,7 @@ public class ItemService {
     public void deleteItem(Integer userId, Integer eventId, Integer itemId) {
         Item item = getItem(userId, eventId, itemId);
 
-        // Blocking deletion if transactions exist
+        // Protects transaction history by preventing deletion of sold items.
         if (transactionRepo.existsByItem_ItemId(itemId)) {
             throw new IllegalArgumentException(
                     "Cannot delete item because it has transactions."
@@ -96,6 +103,7 @@ public class ItemService {
         itemRepo.delete(item);
     }
 
+    // Shared ownership check used before all item operations.
     private Event getEventOwnedByUser(Integer userId, Integer eventId) {
         if (!userRepo.existsById(userId)) {
             throw new NotFoundException("User not found.");
@@ -107,8 +115,9 @@ public class ItemService {
 
     private String trimOrNull(String s) {
         if (s == null) return null;
+
         String t = s.trim();
+
         return t.isEmpty() ? null : t;
     }
 }
-

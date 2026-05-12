@@ -1,47 +1,28 @@
 package com.itemlog.itemlogapi.controller;
 
-import com.itemlog.itemlogapi.dto.UpdateEventRequest;
+import com.itemlog.itemlogapi.dto.CreateEventRequest;
 import com.itemlog.itemlogapi.dto.EventResponse;
-import com.itemlog.itemlogapi.dto.ErrorResponse;
+import com.itemlog.itemlogapi.dto.UpdateEventRequest;
 import com.itemlog.itemlogapi.entity.Event;
-import com.itemlog.itemlogapi.entity.User;
-import com.itemlog.itemlogapi.repository.EventRepository;
-import com.itemlog.itemlogapi.repository.UserRepository;
-import com.itemlog.itemlogapi.security.TokenGuards;
+import com.itemlog.itemlogapi.exception.NotFoundException;
+import com.itemlog.itemlogapi.security.CurrentUser;
+import com.itemlog.itemlogapi.service.EventService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
-/**
- * DEPRECATED: Use V2 endpoints: /events
- */
-@Deprecated
+// Handles event endpoints for the authenticated user.
+// Delegates business logic to EventService and gets user identity from the JWT context.
 @RestController
-@RequestMapping("/users/{userId}/events")
+@RequestMapping("/events")
 public class EventController {
 
-    private final UserRepository userRepo;
-    private final EventRepository eventRepo;
+    private final EventService eventService;
 
-    public EventController(UserRepository userRepo, EventRepository eventRepo) {
-        this.userRepo = userRepo;
-        this.eventRepo = eventRepo;
-    }
-
-    private static ResponseEntity<ErrorResponse> notFound(String msg) {
-        return ResponseEntity.status(404).body(new ErrorResponse(msg));
-    }
-
-    private static ResponseEntity<ErrorResponse> badRequest(String msg) {
-        return ResponseEntity.badRequest().body(new ErrorResponse(msg));
-    }
-
-    private static LocalDate parseDateOrNull(String s) {
-        if (s == null || s.isBlank()) return null;
-        return LocalDate.parse(s.trim()); // expects YYYY-MM-DD
+    public EventController(EventService eventService) {
+        this.eventService = eventService;
     }
 
     private static EventResponse toResponse(Event e) {
@@ -53,121 +34,70 @@ public class EventController {
         );
     }
 
-    @GetMapping
-    public ResponseEntity<?> listEvents(@PathVariable Integer userId) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+    private Integer currentUserId() {
+        Integer userId = CurrentUser.id();
 
-        if (!userRepo.existsById(userId)) {
-            return notFound("User not found.");
+        if (userId == null) {
+            throw new NotFoundException("User not found.");
         }
 
-        List<EventResponse> result = eventRepo.findByUser_UserId(userId).stream()
+        return userId;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EventResponse>> listMyEvents() {
+        Integer userId = currentUserId();
+
+        List<EventResponse> result = eventService.listEvents(userId).stream()
                 .map(EventController::toResponse)
                 .toList();
 
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{eventId}")
-    public ResponseEntity<?> getEvent(@PathVariable Integer userId, @PathVariable Integer eventId) {
-        TokenGuards.requirePathUserMatchesToken(userId);
-
-        if (!userRepo.existsById(userId)) {
-            return notFound("User not found.");
-        }
-
-        Event event = eventRepo.findByEventIdAndUser_UserId(eventId, userId).orElse(null);
-        if (event == null) {
-            return notFound("Event not found for this user.");
-        }
-
-        return ResponseEntity.ok(toResponse(event));
-    }
-
     @PostMapping
-    public ResponseEntity<?> createEvent(@PathVariable Integer userId,
-                                         @RequestBody UpdateEventRequest request) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+    public ResponseEntity<EventResponse> createMyEvent(
+            @Valid @RequestBody CreateEventRequest request
+    ) {
+        Integer userId = currentUserId();
 
-        if (request.getEventName() == null || request.getEventName().isBlank()
-                || request.getEventDate() == null || request.getEventDate().isBlank()) {
-            return badRequest("eventName and eventDate are required.");
-        }
-
-        User user = userRepo.findById(userId).orElse(null);
-        if (user == null) {
-            return notFound("User not found.");
-        }
-
-        LocalDate date;
-        try {
-            date = parseDateOrNull(request.getEventDate());
-            if (date == null) return badRequest("eventDate is required.");
-        } catch (DateTimeParseException ex) {
-            return badRequest("eventDate must be YYYY-MM-DD.");
-        }
-
-        Event event = new Event();
-        event.setUser(user);
-        event.setEventName(request.getEventName().trim());
-        event.setEventDate(date);
-
-        Event saved = eventRepo.save(event);
+        Event saved = eventService.createEvent(userId, request);
 
         return ResponseEntity.status(201).body(toResponse(saved));
     }
 
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventResponse> getMyEvent(@PathVariable Integer eventId) {
+        Integer userId = currentUserId();
+
+        Event event = eventService.getEvent(userId, eventId);
+
+        return ResponseEntity.ok(toResponse(event));
+    }
+
     @PutMapping("/{eventId}")
-    public ResponseEntity<?> updateEvent(@PathVariable Integer userId,
-                                         @PathVariable Integer eventId,
-                                         @RequestBody UpdateEventRequest request) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+    public ResponseEntity<EventResponse> updateMyEvent(
+            @PathVariable Integer eventId,
+            @Valid @RequestBody UpdateEventRequest request
+    ) {
+        Integer userId = currentUserId();
 
-        if (!userRepo.existsById(userId)) {
-            return notFound("User not found.");
-        }
+        Event updated = eventService.updateEvent(userId, eventId, request);
 
-        Event event = eventRepo.findByEventIdAndUser_UserId(eventId, userId).orElse(null);
-        if (event == null) {
-            return notFound("Event not found for this user.");
-        }
-
-        if (request.getEventName() != null && !request.getEventName().isBlank()) {
-            event.setEventName(request.getEventName().trim());
-        }
-
-        if (request.getEventDate() != null && !request.getEventDate().isBlank()) {
-            try {
-                event.setEventDate(parseDateOrNull(request.getEventDate()));
-            } catch (DateTimeParseException ex) {
-                return badRequest("eventDate must be YYYY-MM-DD.");
-            }
-        }
-
-        Event saved = eventRepo.save(event);
-        return ResponseEntity.ok(toResponse(saved));
+        return ResponseEntity.ok(toResponse(updated));
     }
 
     @DeleteMapping("/{eventId}")
-    public ResponseEntity<?> deleteEvent(@PathVariable Integer userId,
-                                         @PathVariable Integer eventId) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+    public ResponseEntity<?> deleteMyEvent(@PathVariable Integer eventId) {
+        Integer userId = currentUserId();
 
-        if (!userRepo.existsById(userId)) {
-            return notFound("User not found.");
-        }
+        eventService.deleteEvent(userId, eventId);
 
-        Event event = eventRepo.findByEventIdAndUser_UserId(eventId, userId).orElse(null);
-        if (event == null) {
-            return notFound("Event not found for this user.");
-        }
-
-        eventRepo.delete(event);
-        return ResponseEntity.ok(new java.util.LinkedHashMap<>() {{
-            put("message", "Event deleted");
-            put("eventId", eventId);
-        }});
+        return ResponseEntity.ok(
+                java.util.Map.of(
+                        "message", "Event deleted",
+                        "eventId", eventId
+                )
+        );
     }
 }
-
-

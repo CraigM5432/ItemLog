@@ -11,7 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-
+// Handles public authentication routes: registration and login.
+// Responsible for password hashing, credential checking, JWT generation and login rate limiting.
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -45,6 +46,8 @@ public class AuthController {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
+
+        // Passwords are stored as BCrypt hashes, never as plain text.
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
 
         userRepo.save(user);
@@ -58,6 +61,7 @@ public class AuthController {
 
         String clientIp = httpRequest.getRemoteAddr();
 
+        // Limits repeated login attempts from the same IP address.
         if (!rateLimiter.isAllowed(clientIp)) {
             return ResponseEntity.status(429)
                     .body(new ErrorResponse("Too many login attempts. Please try again later."));
@@ -69,10 +73,12 @@ public class AuthController {
         }
 
         boolean ok = passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
+
         if (!ok) {
             return ResponseEntity.status(401).body(new ErrorResponse("Invalid credentials."));
         }
 
+        // JWT contains the authenticated user's username and userId for later ownership checks.
         String token = jwtService.generateToken(user.getUserId(), user.getUsername());
 
         return ResponseEntity.ok(new LoginResponse(
@@ -83,4 +89,3 @@ public class AuthController {
         ));
     }
 }
-

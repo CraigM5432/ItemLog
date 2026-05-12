@@ -3,7 +3,8 @@ package com.itemlog.itemlogapi.controller;
 import com.itemlog.itemlogapi.dto.CreateTransactionRequest;
 import com.itemlog.itemlogapi.dto.TransactionResponse;
 import com.itemlog.itemlogapi.entity.Transaction;
-import com.itemlog.itemlogapi.security.TokenGuards;
+import com.itemlog.itemlogapi.exception.NotFoundException;
+import com.itemlog.itemlogapi.security.CurrentUser;
 import com.itemlog.itemlogapi.service.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -15,12 +16,10 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-/**
- * DEPRECATED: Use V2 endpoints: /events/{eventId}/transactions
- */
-@Deprecated
+// Handles transaction recording, transaction history, and CSV export for an event.
+// Transaction business rules are handled by TransactionService.
 @RestController
-@RequestMapping("/users/{userId}/events/{eventId}/transactions")
+@RequestMapping("/events/{eventId}/transactions")
 public class TransactionController {
 
     private final TransactionService txService;
@@ -31,6 +30,7 @@ public class TransactionController {
 
     private static TransactionResponse toResponse(Transaction t) {
         BigDecimal total = t.getSalePrice().multiply(BigDecimal.valueOf(t.getQuantitySold()));
+
         return new TransactionResponse(
                 t.getTransactionId(),
                 t.getEvent().getEventId(),
@@ -43,10 +43,19 @@ public class TransactionController {
         );
     }
 
+    private Integer currentUserId() {
+        Integer userId = CurrentUser.id();
+
+        if (userId == null) {
+            throw new NotFoundException("User not found.");
+        }
+
+        return userId;
+    }
+
     @GetMapping
-    public ResponseEntity<List<TransactionResponse>> list(@PathVariable Integer userId,
-                                                          @PathVariable Integer eventId) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+    public ResponseEntity<List<TransactionResponse>> list(@PathVariable Integer eventId) {
+        Integer userId = currentUserId();
 
         List<TransactionResponse> result = txService.listTransactions(userId, eventId).stream()
                 .map(TransactionController::toResponse)
@@ -56,23 +65,23 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<TransactionResponse> create(@PathVariable Integer userId,
-                                                      @PathVariable Integer eventId,
+    public ResponseEntity<TransactionResponse> create(@PathVariable Integer eventId,
                                                       @Valid @RequestBody CreateTransactionRequest request) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+        Integer userId = currentUserId();
 
+        // Creates the transaction and reduces stock through the service layer.
         Transaction saved = txService.createTransaction(userId, eventId, request);
+
         return ResponseEntity.status(201).body(toResponse(saved));
     }
 
     @GetMapping("/export")
-    public ResponseEntity<byte[]> exportCsv(@PathVariable Integer userId,
-                                            @PathVariable Integer eventId) {
-        TokenGuards.requirePathUserMatchesToken(userId);
+    public ResponseEntity<byte[]> exportCsv(@PathVariable Integer eventId) {
+        Integer userId = currentUserId();
 
         String csv = txService.exportTransactionsCsv(userId, eventId);
-
         byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"transactions_event_" + eventId + ".csv\"")

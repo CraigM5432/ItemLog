@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 
+// Handles creation and parsing of JWT tokens.
+// Tokens contain the authenticated user's username and userId.
 @Service
 public class JwtService {
 
@@ -19,9 +21,12 @@ public class JwtService {
 
     public JwtService(@Value("${app.jwt.secret}") String secret,
                       @Value("${app.jwt.expiration-minutes}") long expirationMinutes) {
+
+        // Enforces a minimum signing secret length for safer HMAC JWT signing.
         if (secret == null || secret.trim().length() < 32) {
             throw new IllegalArgumentException("app.jwt.secret must be at least 32 characters long.");
         }
+
         this.key = Keys.hmacShaKeyFor(secret.trim().getBytes(StandardCharsets.UTF_8));
         this.expirationMinutes = expirationMinutes;
     }
@@ -39,6 +44,7 @@ public class JwtService {
                 .compact();
     }
 
+    // Parses and validates the token signature and expiry.
     public Claims parseClaims(String token) {
         return Jwts.parser()
                 .verifyWith(key)
@@ -53,8 +59,10 @@ public class JwtService {
 
     public Integer extractUserId(String token) {
         Object val = parseClaims(token).get("userId");
+
         if (val instanceof Integer i) return i;
         if (val instanceof Number n) return n.intValue();
+
         return Integer.valueOf(String.valueOf(val));
     }
 }

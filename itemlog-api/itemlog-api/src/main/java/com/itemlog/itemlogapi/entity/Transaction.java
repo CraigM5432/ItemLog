@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+// Entity representing a recorded sale.
+// Each transaction is linked to both an event and an item.
 @Entity
 @Table(name = "transactions")
 public class Transaction {
@@ -25,12 +27,14 @@ public class Transaction {
     @Column(name = "quantity_sold", nullable = false)
     private Integer quantitySold;
 
+    // Stored per transaction so historical sales remain accurate if item prices change later.
     @Column(name = "sale_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal salePrice;
 
     @Column(name = "sale_time", nullable = false)
     private LocalDateTime saleTime;
 
+    // Empty constructor required by JPA.
     public Transaction() {}
 
     public Integer getTransactionId() { return transactionId; }

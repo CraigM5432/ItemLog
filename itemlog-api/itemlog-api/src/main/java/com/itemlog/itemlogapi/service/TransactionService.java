@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// Service layer for transaction business logic.
+// Handles sale recording, stock reduction, transaction history retrieval and CSV export.
 @Service
 public class TransactionService {
 
@@ -47,18 +49,21 @@ public class TransactionService {
                 .orElseThrow(() -> new NotFoundException("Item not found for this event."));
 
         int sold = request.getQuantitySold();
+
         if (item.getQuantity() == null) {
             throw new IllegalArgumentException("Item quantity is not set.");
         }
+
+        // Server-side stock validation prevents client-side manipulation or overselling.
         if (sold > item.getQuantity()) {
             throw new IllegalArgumentException("Not enough stock to complete sale.");
         }
 
-        // decrement stock
         item.setQuantity(item.getQuantity() - sold);
         itemRepo.save(item);
 
         BigDecimal salePrice = request.getSalePrice() != null ? request.getSalePrice() : item.getPrice();
+
         if (salePrice == null) {
             throw new IllegalArgumentException("Item price is not set and salePrice was not provided.");
         }
@@ -81,6 +86,7 @@ public class TransactionService {
 
         for (Transaction t : txs) {
             BigDecimal total = t.getSalePrice().multiply(BigDecimal.valueOf(t.getQuantitySold()));
+
             sb.append(safe(t.getTransactionId())).append(',')
                     .append(safe(t.getEvent().getEventId())).append(',')
                     .append(safe(t.getItem().getItemId())).append(',')
@@ -95,10 +101,12 @@ public class TransactionService {
         return sb.toString();
     }
 
+    // Shared ownership check used before transaction and CSV operations.
     private Event getEventOwnedByUser(Integer userId, Integer eventId) {
         if (!userRepo.existsById(userId)) {
             throw new NotFoundException("User not found.");
         }
+
         return eventRepo.findByEventIdAndUser_UserId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event not found for this user."));
     }
@@ -107,10 +115,13 @@ public class TransactionService {
         return o == null ? "" : String.valueOf(o);
     }
 
+    // Escapes values so item names with commas, quotes or line breaks do not break the CSV file.
     private String csvEscape(String s) {
         if (s == null) return "";
+
         boolean mustQuote = s.contains(",") || s.contains("\"") || s.contains("\n") || s.contains("\r");
         String out = s.replace("\"", "\"\"");
+
         return mustQuote ? "\"" + out + "\"" : out;
     }
 }

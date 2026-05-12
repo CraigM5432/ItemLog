@@ -6,6 +6,8 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+// Simple in-memory rate limiter used to reduce brute-force login attempts.
+// For production scaling, this could be replaced with Redis or another shared store.
 @Component
 public class LoginRateLimiter {
 
@@ -22,7 +24,6 @@ public class LoginRateLimiter {
         }
 
         attempt.count++;
-
         attempts.put(key, attempt);
 
         return attempt.count <= MAX_REQUESTS;
